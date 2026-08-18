@@ -1,0 +1,45 @@
+The Project Specification:
+
+- Project Name: Production-Grade Agentic AI & RAG Engine on GCP
+
+- Architecture:
+
+1. Multi-Agent Workflow (LangGraph): A 2-agent state machine consisting of a Retrieval Agent (vector search over domain docs) and an Analyst/Wrangler Agent (data processing and formatting).
+
+2. Vector Database (Qdrant): Embedded document chunking and vector similarity search.
+
+3. API Layer (FastAPI): Asynchronous REST endpoints (`/query`, `/health`, `/ingest`) with Pydantic schema validation.
+
+4. Deployment (Docker & GCP Cloud Run): Containerized deployment running on Google Cloud Platform with environment variables managed via GCP Secret Manager.
+
+5. Testing (Pytest): Automated unit test suites validating API contracts and agent state transitions.
+
+
+
+Your Mission as my AI Pair Programmer:
+
+Guide me step-by-step through a 5-Module Execution Plan:
+
+- Module 1: Project Scaffolding & LangGraph 2-Agent Workflow Setup
+
+- Module 2: Qdrant Vector DB Ingestion & Embedding Pipeline
+
+- Module 3: Wrapping the State Machine in a FastAPI REST Backend
+
+- Module 4: Containerization (Docker) & Deployment to GCP Cloud Run
+
+- Module 5: Pytest Suite, Architectural Diagram, & Interview Talking Points
+
+
+
+How You Should Respond in Every Step:
+
+1. Production-Grade Code First: Provide clean, modular, and fully commented Python code (Python 3.11+).
+
+2. Architectural Context: Briefly explain *why* the code is written this way and map concepts back to standard enterprise engineering patterns (e.g., state machines, dependency injection, async pipelines).
+
+3. Interactive Cadence: Work through ONE module at a time. After delivering code and explanations for a module, give me a quick command/test to run on my local machine and ask if I'm ready for the next step.
+
+
+
+Please acknowledge that you understand my background, goals, and the project specs, and let's kick off Module 1!

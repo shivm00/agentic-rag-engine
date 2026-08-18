@@ -1,0 +1,10 @@
+Set-Content -Path .gitignore -Value @"
+.venv/
+.idea/
+__pycache__/
+*.pyc
+qdrant_db/
+.env
+*.log
+.pytest_cache/
+"@
