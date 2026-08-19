@@ -1,3 +1,14 @@
+## Overview
+
+A 6-layer enterprise Agentic RAG reference architecture that serves as a production-ready blueprint for scaling AI applications without sacrificing system speed, data quality, or cost visibility.
+
+Instead of relying on simple prompt wrappers that break at scale, it bridges heavy data engineering with modern agentic AI. It uses Databricks, PySpark, and Airflow for batch ingestion with automated data quality circuit breakers, while serving real-time requests using FastAPI and deterministic LangGraph multi-agent workflows.
+
+Enterprises can leverage this exact blueprint as a Proof of Concept (PoC) to securely ingest millions of internal documents, execute sub-second vector searches, and track operational metrics—like token spend and latency—in BigQuery with zero performance impact.
+
+
+
+
 ### System Architecture
 
 * **Layer 1: Batch Ingestion & Compute** (`pipelines/databricks_medallion_ingestion.py`)
