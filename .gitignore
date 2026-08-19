@@ -31,3 +31,4 @@ dbt/target/
 
 # Local Vector Databases
 qdrant_db/
+Project Specs.txt
