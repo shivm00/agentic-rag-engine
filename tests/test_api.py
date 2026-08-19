@@ -32,12 +32,9 @@ def test_query_endpoint_contract():
 
 def test_empty_query_validation():
     """
-    Validates state machine error handling when an empty query string is passed.
+    Validates that empty string payloads are rejected at the API schema layer.
     """
-    payload = {"query": "   "}
+    payload = {"query": ""}
     response = client.post("/query", json=payload)
 
-    assert response.status_code == 200
-    data = response.json()
-    assert data["current_step"] == "retrieval_failed"
-    assert data["error"] is not None
+    assert response.status_code == 422  # HTTP 422 Unprocessable Entity

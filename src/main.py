@@ -1,9 +1,14 @@
-from fastapi import FastAPI, HTTPException, status
+import time
+from fastapi import FastAPI, HTTPException, status, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from src.schemas import QueryRequest, QueryResponse, IngestRequest, IngestResponse
 from src.workflow import app_graph
 from src.ingestion import ingest_documents
 from src.state import AgentState
+from src.warehouse.telemetry_logger import log_telemetry
+
+# Step 6 Import (We will create this file in Step 6):
+from src.warehouse.telemetry_logger import log_telemetry
 
 app = FastAPI(
     title="Enterprise Agentic RAG Engine",
@@ -28,10 +33,12 @@ async def health_check():
     return {"status": "healthy", "service": "agentic-rag-engine"}
 
 @app.post("/query", response_model=QueryResponse, status_code=status.HTTP_200_OK)
-async def query_pipeline(request: QueryRequest):
+async def query_pipeline(request: QueryRequest, background_tasks: BackgroundTasks):
     """
     Synchronously triggers the LangGraph state machine workflow for an incoming query.
     """
+    start_time = time.time()
+
     initial_state: AgentState = {
         "query": request.query,
         "retrieved_docs": [],
@@ -41,7 +48,14 @@ async def query_pipeline(request: QueryRequest):
     }
 
     try:
+        # Executes LangGraph State Machine
         result = app_graph.invoke(initial_state)
+
+        # Calculate latency in milliseconds
+        execution_time_ms = round((time.time() - start_time) * 1000, 2)
+
+        # STEP 6 HOOK: Stream operational telemetry to BigQuery/Snowflake asynchronously
+        # background_tasks.add_task(log_telemetry, result, execution_time_ms)
 
         return QueryResponse(
             query=result["query"],

@@ -1,0 +1,17 @@
+name: 'agentic_rag_analytics'
+version: '1.0.0'
+config-version: 2
+
+# Profile to match your Snowflake / BigQuery connection settings
+profile: 'agentic_rag_profile'
+
+model-paths: ["models"]
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  agentic_rag_analytics:
+    # Materialize all models in this folder as performance-optimized SQL tables
+    +materialized: table

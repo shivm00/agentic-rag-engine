@@ -1,42 +1,22 @@
-+-----------------------------------------------------------------------------------+
-|                                 CLIENT LAYER                                      |
-|                       Angular / React UI / API Clients                            |
-+-----------------------------------------------------------------------------------+
-|
-HTTP POST /query
-v
-+-----------------------------------------------------------------------------------+
-|                            GCP CLOUD RUN CONTAINER                                |
-|                                                                                   |
-|  +-----------------------------------------------------------------------------+  |
-|  |                     API BOUNDARY (FastAPI + Pydantic)                       |  |
-|  |  - Enforces OAuth2/JWT & Pydantic Request/Response Schema Validation        |  |
-|  |  - Exposes /health (Liveness Probe), /query, and /ingest Endpoints           |  |
-|  +-----------------------------------------------------------------------------+  |
-|                                         |                                         |
-|                                   Initializes State                               |
-|                                         v                                         |
-|  +-----------------------------------------------------------------------------+  |
-|  |                 AGENTIC STATE MACHINE ENGINE (LangGraph)                    |  |
-|  |                                                                             |  |
-|  |   [START]                                                                   |  |
-|  |      |                                                                      |  |
-|  |      v                                                                      |  |
-|  |  +-------------------------+      Dense Vector Search    +-----------------+ |  |
-|  |  |   Retrieval Agent Node  | --------------------------> |  Embedded DB    | |  |
-|  |  |  - Embeds Query Vector  |                             |  (Qdrant)       | |  |
-|  |  |  - Runs k-NN Search     | <-------------------------- |  ./qdrant_db    | |  |
-|  |  +-------------------------+     Top-K Matches + Payload +-----------------+ |  |
-|  |      |                                                                      |  |
-|  |      | Updates AgentState["retrieved_docs"]                                 |  |
-|  |      v                                                                      |  |
-|  |  +-------------------------+                                                |  |
-|  |  |   Analyst Agent Node    |                                                |  |
-|  |  |  - Data Wrangling       |                                                |  |
-|  |  |  - Insight Synthesis    |                                                |  |
-|  |  +-------------------------+                                                |  |
-|  |      |                                                                      |  |
-|  |      v                                                                      |  |
-|  |    [END] ---> Returns final state delta payload                             |  |
-|  +-----------------------------------------------------------------------------+  |
-+-----------------------------------------------------------------------------------+
+┌───────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                 OFFLINE BATCH & DATA ENGINE                                       │
+│                                                                                                   │
+│  [ RAW DOCS ] ──► [ Databricks + PySpark ] ──► [ Great Expectations ] ──► [ GOLD DELTA TABLE ]    │
+│  (S3 / GCS)          (Medallion ETL)            (Data Quality Gate)           & Vector Index    │
+└───────────────────────────────────────────────────────────────────────────────────────────────────┘
+▲
+│ Read-Only (ms)
+┌─────────────────────────────────────────────────────────────────────────────────────┴─────────────┐
+│                                 ONLINE REAL-TIME SERVING LAYER                                    │
+│                                                                                                   │
+│  [ USER QUERY ] ──► [ FastAPI Server ] ──► [ LangGraph State Machine ] ──► [ Grounded Response ] │
+│                         (POST /query)         (Retrieval & Analyst)                               │
+└───────────────────────────────────────────────────────────────────────────────────────────────────┘
+│
+▼ (Async Non-Blocking Stream)
+┌───────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                 TELEMETRY & LLMOPS OBSERVABILITY                                  │
+│                                                                                                   │
+│  [ Background Worker ] ──► [ Google BigQuery ] ──► [ dbt Data Marts ] ──► [ Operational Dashboard]│
+│  (Latency & Tokens)        (fct_agent_telemetry)   (fct_agent_runs)       (Cost & Performance)    │
+└───────────────────────────────────────────────────────────────────────────────────────────────────┘

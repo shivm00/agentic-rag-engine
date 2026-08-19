@@ -1,0 +1,26 @@
+version: 2
+
+sources:
+  - name: rag_warehouse
+    tables:
+      - name: fct_agent_telemetry
+
+models:
+  - name: fct_agent_runs
+    description: "Daily aggregated operational data mart for Agentic RAG performance, token costs, and latencies."
+    columns:
+      - name: run_date
+        description: "The date of query execution."
+        tests:
+          - not_null
+          - unique
+
+      - name: total_agent_queries
+        description: "Total volume of user requests handled by FastAPI and LangGraph."
+        tests:
+          - not_null
+
+      - name: total_spend_usd
+        description: "Calculated API token cost in USD."
+        tests:
+          - not_null

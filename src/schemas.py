@@ -4,6 +4,7 @@ from typing import List, Dict, Any, Optional
 class QueryRequest(BaseModel):
     query: str = Field(
         ...,
+        min_length=1,
         description="Natural language query to be processed by the multi-agent graph.",
         json_schema_extra={"example": "How do we handle GCP secret rotation?"}
     )
